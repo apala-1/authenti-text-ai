@@ -18,9 +18,22 @@ export const predictText = (req, res) => {
 
   const result = analyzeText(text);
 
+  let confidenceLabel = "Low";
+  if (result.score >= 0.7) confidenceLabel = "High";
+  else if (result.score >= 0.5) confidenceLabel = "Medium";
+
+
   res.json({
     score: result.score,
+    confidence: confidenceLabel,
     explanation: result.explanation,
-    disclaimer: "This is a probabilistic estimate, not a definitive judgment.",
-  });
+    limitations: [
+      "Short texts reduce accuracy",
+      "AI writing styles evolve over time",
+      "False positives are possible"
+    ],
+    intendedUse:
+      "Assist human judgment, not replace it",
+    }
+  );
 };

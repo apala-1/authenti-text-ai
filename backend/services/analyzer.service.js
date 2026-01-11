@@ -33,6 +33,10 @@ const analyzeText = (text) => {
     explanation.push("Long structured response");
   }
 
+  if (explanation.length === 0) {
+  explanation.push("No strong AI-generated patterns detected");
+}
+
   score = Math.min(score, 0.95);
 
   return { score, explanation };
