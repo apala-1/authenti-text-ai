@@ -6,13 +6,19 @@ const Home = () => {
   const [text, setText] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = () => {
-    if (!text.trim()) {
-      alert("Please enter some text!");
-      return;
-    }
-    navigate("/result", { state: { text } });
-  };
+  const [loading, setLoading] = useState(false);
+
+const handleSubmit = () => {
+  if (!text.trim()) {
+    alert("Please enter some text!");
+    return;
+  }
+  setLoading(true);
+  navigate("/result", { state: { text } });
+};
+<button onClick={handleSubmit} disabled={loading}>
+  {loading ? "Checking..." : "Check Text"}
+</button>
 
   return (
     <div className="container">

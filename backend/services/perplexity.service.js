@@ -2,32 +2,27 @@ import { execFile } from "child_process";
 import path from "path";
 import { fileURLToPath } from "url";
 
+// Fix for ES Modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const getPerplexity = (text) => {
   return new Promise((resolve, reject) => {
-    const scriptPath = path.join(
-      __dirname,
-      "../python/perplexity.py"
-    );
+    const scriptPath = path.join(__dirname, "../python/perplexity.py");
 
     execFile(
-      "python", // or "python3" if needed
+      "python",
       [scriptPath, text],
-      { timeout: 8000 },
+      { maxBuffer: 1024 * 500, timeout: 15000 },
       (error, stdout, stderr) => {
-        if (error) {
-          console.error("Python error:", stderr);
-          return reject(error);
+        if (error) return reject(error);
+
+        const perplexity = parseFloat(stdout);
+        if (isNaN(perplexity)) {
+          return reject(new Error("Perplexity calculation failed"));
         }
 
-        const value = parseFloat(stdout);
-        if (isNaN(value)) {
-          return reject(new Error("Invalid perplexity output"));
-        }
-
-        resolve(value);
+        resolve(perplexity);
       }
     );
   });

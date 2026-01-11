@@ -1,24 +1,28 @@
 import getPerplexity from "./perplexity.service.js";
 
 const analyzeText = async (text) => {
-  let score = 0.4;
-  let explanation = [];
+  try {
+    const perplexity = await getPerplexity(text);
 
-  const perplexity = await getPerplexity(text);
+    let score = 0.5; // default neutral
+    let explanation = [];
 
-  if (perplexity < 40) {
-    score += 0.25;
-    explanation.push("Low perplexity typical of AI-generated text");
-  } else if (perplexity < 100) {
-    score += 0.1;
-    explanation.push("Moderate linguistic predictability detected");
-  } else {
-    explanation.push("High linguistic variability (human-like)");
+    if (perplexity < 60) {
+      score = 0.7; // likely AI
+      explanation.push("Low linguistic variability (AI-like)");
+    } else if (perplexity < 120) {
+      score = 0.5;
+      explanation.push("Moderate linguistic predictability detected");
+    } else {
+      score = 0.4; // likely human
+      explanation.push("High linguistic variability (human-like)");
+    }
+
+    return { score, perplexity, explanation };
+  } catch (err) {
+    console.error(err);
+    return { score: null, perplexity: null, explanation: [] };
   }
-
-  score = Math.min(score, 0.95);
-
-  return { score, explanation, perplexity };
 };
 
 export default analyzeText;

@@ -1,19 +1,22 @@
 import sys
+from transformers import GPT2Tokenizer, GPT2LMHeadModel
 import torch
-from transformers import GPT2LMHeadModel, GPT2TokenizerFast
 
-tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
+# Join all arguments into a single text string (handles spaces & special characters)
+text = " ".join(sys.argv[1:])
+
+# Load GPT-2 model & tokenizer
+tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
 model = GPT2LMHeadModel.from_pretrained("gpt2")
-model.eval()
 
-def calculate_perplexity(text):
-    encodings = tokenizer(text, return_tensors="pt")
-    with torch.no_grad():
-        outputs = model(**encodings, labels=encodings["input_ids"])
-        loss = outputs.loss
-    return torch.exp(loss).item()
+# Encode input
+inputs = tokenizer.encode(text, return_tensors="pt")
 
-if __name__ == "__main__":
-    text = sys.argv[1]
-    perplexity = calculate_perplexity(text)
-    print(perplexity)
+# Get loss / perplexity
+with torch.no_grad():
+    outputs = model(inputs, labels=inputs)
+    loss = outputs.loss
+    perplexity = torch.exp(loss).item()
+
+# Print perplexity (Node will read stdout)
+print(perplexity)

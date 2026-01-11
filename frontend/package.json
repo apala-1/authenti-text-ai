@@ -41,7 +41,8 @@
     ]
   },
   "devDependencies": {
-    "eslint": "^9.39.2",
+    "eslint": "^8.57.0",
+    "eslint-config-react-app": "^7.0.1",
     "prettier": "^3.7.4"
   }
 }
