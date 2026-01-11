@@ -1,22 +1,22 @@
 // backend/server.js
-const express = require("express");
-const bodyParser = require("body-parser");
-const cors = require("cors");
+import express, { json } from "express";
+import cors from "cors";
+
+import predictRoutes from "./routes/predict.routes.js";
 
 const app = express();
 const PORT = 3000;
 
 app.use(cors());
-app.use(bodyParser.json());
+app.use(json());
 
 app.get("/", (req, res) => {
   res.send("AuthentiText AI Backend Running");
 });
 
-// placeholder predict route
-app.post("/predict", (req, res) => {
-  const { text } = req.body;
-  res.json({ score: 0.5, explanation: ["placeholder"] });
-});
+// routes
+app.use("/predict", predictRoutes);
 
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});
