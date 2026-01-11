@@ -1,4 +1,3 @@
-// backend/controllers/predict.controller.js
 import analyzeText from "../services/analyzer.service.js";
 
 export const predictText = async (req, res) => {
@@ -16,31 +15,30 @@ export const predictText = async (req, res) => {
     });
   }
 
-  let result;
   try {
-    result = await analyzeText(text);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
+    const result = await analyzeText(text);
+
+    let confidenceLabel = "Low";
+    if (result.score >= 0.7) confidenceLabel = "High";
+    else if (result.score >= 0.5) confidenceLabel = "Medium";
+
+    res.json({
+      score: result.score,
+      confidence: confidenceLabel,
+      explanation: result.explanation,
+      perplexity: result.perplexity,
+      limitations: [
+        "Short texts reduce accuracy",
+        "AI writing styles evolve over time",
+        "False positives are possible",
+      ],
+      intendedUse: "Assist human judgment, not replace it",
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
       error: "AI analysis failed",
-      fallback: "Using heuristic detection only"
+      fallback: "Using heuristic detection only",
     });
   }
-
-  let confidenceLabel = "Low";
-  if (result.score >= 0.7) confidenceLabel = "High";
-  else if (result.score >= 0.5) confidenceLabel = "Medium";
-
-  res.json({
-    score: result.score,
-    confidence: confidenceLabel,
-    explanation: result.explanation,
-    perplexity: result.perplexity ?? null,
-    limitations: [
-      "Short texts reduce accuracy",
-      "AI writing styles evolve over time",
-      "False positives are possible"
-    ],
-    intendedUse: "Assist human judgment, not replace it"
-  });
 };
