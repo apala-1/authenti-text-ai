@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Navbar from "../components/Navbar.jsx";
+import Navbar from "./components/Navbar";       // <-- component import
+import "./components/Navbar.css";               // <-- CSS import
 import Home from "./pages/Home";
 import Result from "./pages/Result";
 import About from "./pages/About";
@@ -9,7 +10,7 @@ import NotFound from "./pages/NotFound";
 function App() {
   return (
     <Router>
-      <Navbar /> {/* Optional top nav */}
+      <Navbar /> {/* top nav */}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/result" element={<Result />} />
