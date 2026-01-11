@@ -1,41 +1,24 @@
-const analyzeText = (text) => {
-  const sentences = text.split(/[.!?]/).filter(Boolean);
-  const words = text.split(/\s+/).filter(Boolean);
+import getPerplexity from "./perplexity.service.js";
 
-  const avgSentenceLength =
-    words.length / (sentences.length || 1);
-
-  const wordCounts = {};
-  words.forEach((word) => {
-    const w = word.toLowerCase();
-    wordCounts[w] = (wordCounts[w] || 0) + 1;
-  });
-
-  const repeatedWords = Object.values(wordCounts).filter(
-    (count) => count > 3
-  ).length;
-
+const analyzeText = async (text) => {
   let score = 0.4;
   let explanation = [];
 
-  if (avgSentenceLength > 20) {
-    score += 0.15;
-    explanation.push("Uniform sentence length");
-  }
+  const perplexity = await getPerplexity(text);
 
-  if (repeatedWords > 5) {
-    score += 0.15;
-    explanation.push("High word repetition");
-  }
-
-  if (text.length > 800) {
+  if (perplexity < 40) {
+    score += 0.25;
+    explanation.push("Low perplexity typical of AI-generated text");
+  } else if (perplexity < 100) {
     score += 0.1;
-    explanation.push("Long structured response");
+    explanation.push("Moderate linguistic predictability detected");
+  } else {
+    explanation.push("High linguistic variability (human-like)");
   }
 
   score = Math.min(score, 0.95);
 
-  return { score, explanation };
+  return { score, explanation, perplexity };
 };
 
 export default analyzeText;
