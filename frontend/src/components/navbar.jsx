@@ -1,11 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import "./Navbar.css"; // <-- import the CSS here
+import "./Navbar.css";
 
 const Navbar = () => {
   return (
     <nav className="navbar">
-      <h2>AuthentiText AI</h2>
+      <h2>AuthentiText AI</h2> {/* Project name here */}
       <div className="nav-links">
         <Link to="/">Home</Link>
         <Link to="/about">About</Link>
